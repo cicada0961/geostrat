@@ -17,7 +17,7 @@ Le programme modélise trois blocs géopolitiques rivaux qui s'affrontent pour l
 ## Compilation
 
 ```bash
-gcc -Wall main.c pays.c armee.c ressources.c -o geostrat
+gcc -Wall main.c src/pays.c src/armee.c src/ressources.c -o geostrat
 ./geostrat
 ```
 
@@ -25,10 +25,13 @@ gcc -Wall main.c pays.c armee.c ressources.c -o geostrat
 
 ```
 .
-├── main.c           # Point d'entrée, boucle de simulation
-├── pays.h / pays.c  # Structure Pays, initialisation, affichage, événements, simulation
-├── armee.h / armee.c        # Structure Armee, calcul de puissance
-├── ressources.h / ressources.c  # Structure Ressources
+├── main.c                # Point d'entrée, boucle de simulation
+├── src/
+│   ├── pays.h / pays.c           # Structure Pays, initialisation, affichage, événements, simulation
+│   ├── armee.h / armee.c         # Structure Armee, calcul de puissance
+│   └── ressources.h / ressources.c   # Structure Ressources
+├── CMakeLists.txt
+├── .gitignore
 └── README.md
 ```
 
@@ -59,4 +62,4 @@ Veralion        2446.76      93     212        En paix
 
 ## Auteur
 
-Karim Makhlouf — L1 Maths-Informatique, Sorbonne Université
+Karim — L1 Maths-Informatique, Sorbonne Université
