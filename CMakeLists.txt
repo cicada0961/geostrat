@@ -9,4 +9,5 @@ add_executable(geostrat main.c
         src/pays.c
         src/ressources.h
         src/armee.h
-        src/pays.h)
+        src/pays.h
+        src/armee.c)

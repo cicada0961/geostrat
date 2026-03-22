@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Initialise un pays avec toutes ses valeurs et l'ajoute au tableau à l'index *taille */
 void initialiser_pays(Pays pays[], char *nom, char *dirigeant, int stab, int petrole, int techno, int nourriture, float pib, int population,
     int soldats, int chars, int avions, int missiles, int guerre, int allie, int *taille) {
 
@@ -27,6 +28,7 @@ void initialiser_pays(Pays pays[], char *nom, char *dirigeant, int stab, int pet
     (*taille)++;
 }
 
+/* Affiche la fiche complète d'un pays dans un encadré */
 void afficher_pays(Pays p) {
     printf("\n╔══════════════════════════════════════╗\n");
     printf("║  Pays      : %-23s║\n", p.name);
@@ -50,12 +52,16 @@ void afficher_pays(Pays p) {
     printf("╚══════════════════════════════════════╝\n");
 }
 
+/* Affiche la fiche de chaque pays du tableau */
 void afficher_tout_pays(Pays pays[], int* taille) {
     for (int i = 0; i < *taille; i++) {
         afficher_pays(pays[i]);
     }
 }
 
+/* Applique un événement sur un pays selon son type :
+   1 = crise économique, 2 = boom technologique, 3 = conflit armé,
+   4 = accord de paix, 5 = catastrophe naturelle */
 void appliquer_evenement(Pays *p, int type_evenement) {
     switch (type_evenement) {
         case 1: {
@@ -94,6 +100,7 @@ void appliquer_evenement(Pays *p, int type_evenement) {
     }
 }
 
+/* Remet à 0 toutes les valeurs négatives, et plafonne la stabilité à 100 */
 void corriger_valeur(Pays *p) {
     if (p->stabilite < 0) p->stabilite = 0;
     if (p->stabilite > 100) p->stabilite = 100;
@@ -111,6 +118,14 @@ void corriger_valeur(Pays *p) {
     if (p->armee.puissance < 0) p->armee.puissance = 0;
 }
 
+/* Simule un tour pour chaque pays :
+   - croissance de la population (+1%)
+   - consommation de pétrole (-50)
+   - croissance du PIB si en paix (+2%), déclin si en guerre (-3%)
+   - bonus PIB si technologie > 70
+   - perte de stabilité si plus de pétrole
+   - passage en guerre si stabilité < 20
+   Déclenche ensuite un événement aléatoire */
 void simuler_tour(Pays pays[], int nb_pays) {
     for (int i = 0; i < nb_pays; i++) {
         pays[i].res.population = (int)(pays[i].res.population * 1.01);
@@ -126,12 +141,14 @@ void simuler_tour(Pays pays[], int nb_pays) {
     for (int i = 0; i < nb_pays; i++) corriger_valeur(&pays[i]);
 }
 
+/* Tire au sort un pays et un type d'événement, puis l'applique */
 void event_aleatoire(Pays pays[], int nb_pays) {
     int choix_pays = rand() % nb_pays;
     int type_event = rand() % 5 + 1;
     appliquer_evenement(&pays[choix_pays], type_event);
 }
 
+/* Affiche un tableau récapitulatif de tous les pays à la fin d'un tour */
 void recap_tour(Pays pays[], int nb_pays, int nb_tour) {
     printf("\n=== FIN DU TOUR %d ===\n", nb_tour);
     printf("%-15s %-12s %-6s %-10s %-10s\n", "PAYS", "PIB($MDS)", "STAB", "PEUPLE(M)", "STATUT");
@@ -147,7 +164,7 @@ void recap_tour(Pays pays[], int nb_pays, int nb_tour) {
     printf("\n\n");
 }
 
-
+/* Trie le tableau de pays par PIB croissant (algorithme à bulles) */
 void tri_a_bulle(Pays pays[], int nb_pays) {
     for (int i = 0; i < nb_pays - 1; i++) {
         for (int j = 0; j < nb_pays -i - 1; j++) {
@@ -160,6 +177,7 @@ void tri_a_bulle(Pays pays[], int nb_pays) {
     }
 }
 
+/* Trie les pays par PIB puis affiche le classement du plus riche au plus pauvre */
 void afficher_classement_pib(Pays pays[], int nb_pays) {
     tri_a_bulle(pays, nb_pays);
 
@@ -169,6 +187,7 @@ void afficher_classement_pib(Pays pays[], int nb_pays) {
     }
 }
 
+/* Retourne 1 si tous les pays sont en guerre simultanément (fin du monde), 0 sinon */
 int fin_du_monde(Pays pays[], int nb_pays) {
     int cmt = 0;
     for (int i = 0; i < nb_pays; i++) {
@@ -180,16 +199,18 @@ int fin_du_monde(Pays pays[], int nb_pays) {
     return 0;
 }
 
+/* Retourne un pointeur vers le pays ayant la plus grande puissance militaire */
 Pays* trouver_plus_fort(Pays pays[], int nb_pays) {
     Pays *plus_fort = &pays[0];
     for (int i = 1; i < nb_pays; i++) {
         if (pays[i].armee.puissance > plus_fort->armee.puissance)
             plus_fort = &pays[i];
     }
-
     return plus_fort;
 }
 
+/* Transfère du pétrole et du PIB du pays donneur vers le pays receveur.
+   La stabilité du receveur augmente de 5. Annule si le donneur n'a pas assez. */
 void transfert_aide(Pays *donneur, Pays *receveur, int petrole, float pib_aide) {
     if (donneur->res.petrole < petrole || donneur->res.pib < pib_aide) {
         printf("Ressources insuffisante, aide annulee.\n");
@@ -205,6 +226,7 @@ void transfert_aide(Pays *donneur, Pays *receveur, int petrole, float pib_aide) 
     printf("Aide accomplie !\n");
 }
 
+/* Calcule et remplit le PIB total, la population totale et le nombre de pays en guerre */
 void stats_mondiales(Pays pays[], int nb_pays, float *pib_total, int *pop_totale, int *pays_en_guerre) {
     int cmt_en_guerre = 0;
     int somme_pop = 0;
