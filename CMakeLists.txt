@@ -4,9 +4,9 @@ project(geostrat C)
 set(CMAKE_C_STANDARD 11)
 
 add_executable(geostrat main.c
-        ressources.c
-        armee.c
-        pays.c
-        ressources.h
-        armee.h
-        pays.h)
+        src/ressources.c
+        src/armee.c
+        src/pays.c
+        src/ressources.h
+        src/armee.h
+        src/pays.h)
